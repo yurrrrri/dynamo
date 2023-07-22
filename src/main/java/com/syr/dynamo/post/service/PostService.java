@@ -1,13 +1,12 @@
-package com.syr.dynamo.service;
+package com.syr.dynamo.post.service;
 
-import com.syr.dynamo.entity.Post;
-import com.syr.dynamo.repository.PostRepository;
+import com.syr.dynamo.post.entity.Post;
+import com.syr.dynamo.post.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor

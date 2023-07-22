@@ -1,4 +1,4 @@
-package com.syr.dynamo.entity;
+package com.syr.dynamo.post.entity;
 
 import lombok.*;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbBean;

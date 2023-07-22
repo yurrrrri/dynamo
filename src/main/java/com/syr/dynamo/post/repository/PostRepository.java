@@ -1,6 +1,6 @@
-package com.syr.dynamo.repository;
+package com.syr.dynamo.post.repository;
 
-import com.syr.dynamo.entity.Post;
+import com.syr.dynamo.post.entity.Post;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;

@@ -1,7 +1,7 @@
-package com.syr.dynamo.controller;
+package com.syr.dynamo.post.controller;
 
-import com.syr.dynamo.entity.Post;
-import com.syr.dynamo.service.PostService;
+import com.syr.dynamo.post.entity.Post;
+import com.syr.dynamo.post.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
