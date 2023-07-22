@@ -5,13 +5,17 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
+import software.amazon.awssdk.enhanced.dynamodb.Key;
+import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.BeanTableSchema;
+import software.amazon.awssdk.enhanced.dynamodb.model.GetItemEnhancedRequest;
 import software.amazon.awssdk.enhanced.dynamodb.model.PageIterable;
 import software.amazon.awssdk.enhanced.dynamodb.model.PutItemEnhancedRequest;
 import software.amazon.awssdk.enhanced.dynamodb.model.ScanEnhancedRequest;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
@@ -42,4 +46,19 @@ public class PostRepository {
 
         return scan.items().stream().toList();
     }
+
+    public Optional<Post> findByIdAndCreateDate(String id, String createDate) {
+        DynamoDbTable<Post> table = dynamoDbEnhancedClient.table(TABLE_NAME, TableSchema.fromBean(Post.class));
+
+        Key key = Key.builder()
+                .partitionValue(id)
+                .sortValue(createDate)
+                .build();
+
+        Post post = table.getItem(
+                (GetItemEnhancedRequest.Builder requestBuilder) -> requestBuilder.key(key));
+
+        return Optional.ofNullable(post);
+    }
+
 }

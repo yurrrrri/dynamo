@@ -5,6 +5,7 @@ import com.syr.dynamo.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -27,6 +28,12 @@ public class PostController {
     @ResponseBody
     public List<Post> posts() {
         return postService.findAll();
+    }
+
+    @GetMapping("{id}/{createDate}")
+    @ResponseBody
+    public Post post(@PathVariable String id, @PathVariable String createDate) {
+        return postService.findByIdAndCreateDate(id, createDate).orElse(null);
     }
 
 }
