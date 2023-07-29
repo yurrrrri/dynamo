@@ -63,7 +63,7 @@ public class ChatMessageRepository {
 
         QueryConditional queryConditional = QueryConditional
                 .sortBetween(
-                        Key.builder().partitionValue(chatRoomId).sortValue(createDateFrom).build()
+                        Key.builder().partitionValue(chatRoomId).sortValue(createDateFrom).build(),
                         Key.builder().partitionValue(chatRoomId).sortValue(createDateTo).build()
                 );
 

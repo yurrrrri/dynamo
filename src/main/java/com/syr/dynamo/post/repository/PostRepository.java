@@ -47,13 +47,11 @@ public class PostRepository {
         return scan.items().stream().toList();
     }
 
-    public Optional<Post> findByIdAndCreateDate(String id, String createDate) {
-        DynamoDbTable<Post> table = dynamoDbEnhancedClient.table(TABLE_NAME, TableSchema.fromBean(Post.class));
+    public Optional<Post> findById(String id) {
+        DynamoDbTable<Post> table = dynamoDbEnhancedClient
+                .table(TABLE_NAME, TableSchema.fromBean(Post.class));
 
-        Key key = Key.builder()
-                .partitionValue(id)
-                .sortValue(createDate)
-                .build();
+        Key key = Key.builder().partitionValue(id).build();
 
         Post post = table.getItem(
                 (GetItemEnhancedRequest.Builder requestBuilder) -> requestBuilder.key(key));
