@@ -3,12 +3,18 @@ package com.syr.dynamo.chat.repository;
 import com.syr.dynamo.chat.entity.ChatMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+import software.amazon.awssdk.core.pagination.sync.SdkIterable;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
+import software.amazon.awssdk.enhanced.dynamodb.Key;
+import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.BeanTableSchema;
+import software.amazon.awssdk.enhanced.dynamodb.model.Page;
 import software.amazon.awssdk.enhanced.dynamodb.model.PutItemEnhancedRequest;
+import software.amazon.awssdk.enhanced.dynamodb.model.QueryConditional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -36,15 +42,19 @@ public class ChatMessageRepository {
     }
 
     public List<ChatMessage> findByChatRoomId(long chatRoomId) {
-        DynamoDbTable<ChatMessage> table = dynamoDbEnhancedClient
-                .table(TABLE_NAME, BeanTableSchema.create(ChatMessage.class));
+        TableSchema<ChatMessage> schema = TableSchema.fromBean(ChatMessage.class);
+        Key partitionKey = Key.builder().partitionValue(chatRoomId).build();
 
-        return table
-                .scan()
-                .items()
-                .stream()
-                .filter(chatMessage -> chatMessage.getChatRoomId() == chatRoomId)
-                .toList();
+        QueryConditional queryConditional = QueryConditional.keyEqualTo(partitionKey);
+        SdkIterable<Page<ChatMessage>> pages = dynamoDbEnhancedClient.table(TABLE_NAME, schema)
+                .query(queryConditional);
+
+        List<ChatMessage> results = new ArrayList<>();
+        for (Page<ChatMessage> page : pages) {
+            results.addAll(page.items());
+        }
+
+        return results;
     }
 
 }
