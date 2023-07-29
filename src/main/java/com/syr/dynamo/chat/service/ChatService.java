@@ -28,4 +28,10 @@ public class ChatService {
     public List<ChatMessage> findChatMessagesByChatRoomId(long chatRoomId) {
         return chatMessageRepository.findByChatRoomId(chatRoomId);
     }
+
+    public List<ChatMessage> findChatMessagesByChatRoomIdAndCreateDate(
+            long chatRoomId, String createDate
+    ) {
+        return chatMessageRepository.findByChatRoomIdAndCreateDateStartsWith(chatRoomId, createDate);
+    }
 }

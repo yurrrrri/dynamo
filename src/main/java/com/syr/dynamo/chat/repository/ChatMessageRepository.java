@@ -24,6 +24,7 @@ public class ChatMessageRepository {
 
     private final DynamoDbEnhancedClient dynamoDbEnhancedClient;
     private static final String TABLE_NAME = "chatMessage";
+    private final TableSchema<ChatMessage> schema = TableSchema.fromBean(ChatMessage.class);
 
     public ChatMessage save(ChatMessage chatMessage) {
         chatMessage.setId(UUID.randomUUID().toString());
@@ -42,7 +43,6 @@ public class ChatMessageRepository {
     }
 
     public List<ChatMessage> findByChatRoomId(long chatRoomId) {
-        TableSchema<ChatMessage> schema = TableSchema.fromBean(ChatMessage.class);
         Key partitionKey = Key.builder().partitionValue(chatRoomId).build();
 
         QueryConditional queryConditional = QueryConditional.keyEqualTo(partitionKey);
@@ -57,4 +57,24 @@ public class ChatMessageRepository {
         return results;
     }
 
+    public List<ChatMessage> findByChatRoomIdAndCreateDateStartsWith(long chatRoomId, String createDate) {
+        String createDateFrom = createDate + "T00:00:00.000000";
+        String createDateTo = createDate + "T23:59:59.999999";
+
+        QueryConditional queryConditional = QueryConditional
+                .sortBetween(
+                        Key.builder().partitionValue(chatRoomId).sortValue(createDateFrom).build()
+                        Key.builder().partitionValue(chatRoomId).sortValue(createDateTo).build()
+                );
+
+        SdkIterable<Page<ChatMessage>> pages = dynamoDbEnhancedClient.table(TABLE_NAME, schema)
+                .query(queryConditional);
+
+        List<ChatMessage> results = new ArrayList<>();
+        for (Page<ChatMessage> page : pages) {
+            results.addAll(page.items());
+        }
+
+        return results;
+    }
 }
